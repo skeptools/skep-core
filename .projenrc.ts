@@ -10,6 +10,10 @@ const project = new typescript.TypeScriptProject({
     'cdktf@~0',
     'constructs@~10',
   ],
+  peerDeps: [
+    'cdktf@~0',
+    'constructs@~10',
+  ],
   gitignore: [
     '*.d.ts',
     '*.js',
