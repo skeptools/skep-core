@@ -9,6 +9,7 @@ const project = new typescript.TypeScriptProject({
   deps: [
     'cdktf@~0',
     'constructs@~10',
+    'timezone-enum@~1',
   ],
   peerDeps: [
     'cdktf@~0',

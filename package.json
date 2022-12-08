@@ -45,7 +45,8 @@
   },
   "dependencies": {
     "cdktf": "~0",
-    "constructs": "~10"
+    "constructs": "~10",
+    "timezone-enum": "~1"
   },
   "main": "lib/index.js",
   "license": "Apache-2.0",

@@ -5858,6 +5858,11 @@ through@2, "through@>=2.2.7 <3":
   resolved "https://registry.yarnpkg.com/through/-/through-2.3.8.tgz#0dd4c9ffaabc357960b1b724115d7e0e86a2e1f5"
   integrity sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==
 
+timezone-enum@~1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/timezone-enum/-/timezone-enum-1.0.1.tgz#200870301165dc824ac0fabab61455ab098154fc"
+  integrity sha512-LwL2YvHxG/tRzSL3nEbhH6F5ZGM0/8x4lPg32cs1jVSIHhE28xfZKULQ0cS90dHGaVhIdCuwU/hBmZjiaP96ZQ==
+
 tiny-glob@^0.2.9:
   version "0.2.9"
   resolved "https://registry.yarnpkg.com/tiny-glob/-/tiny-glob-0.2.9.tgz#2212d441ac17928033b110f8b3640683129d31e2"

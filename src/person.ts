@@ -1,4 +1,5 @@
 import { Construct } from 'constructs';
+import Timezone from 'timezone-enum';
 import { Base, BaseProps } from './common';
 
 export interface PersonBaseProps<RoleType> extends BaseProps {
@@ -10,6 +11,7 @@ export interface PersonBaseProps<RoleType> extends BaseProps {
   // Can't have AllPeople in context here because they may not exist at the right time. Can iterate on this.
   readonly manager?: string;
   readonly role: RoleType;
+  readonly timeZone: Timezone;
 }
 
 export class BasePerson<PersonPropsType, RoleType> extends Base<PersonPropsType & PersonBaseProps<RoleType>> {

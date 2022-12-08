@@ -1,4 +1,5 @@
 import { App } from 'cdktf';
+import Timezone from 'timezone-enum';
 import { OrganizationProps, PersonProps, SkepStack, TeamProps } from '../src';
 
 type TeamType = 'team' | 'guild';
@@ -10,6 +11,7 @@ const people: { [key: string]: PersonProps<Integrations, RoleType> } = {
     lastName: 'Bar',
     emailAddress: 'foo.bar@example.com',
     role: 'engineering',
+    timeZone: Timezone['America/New_York'],
     integrations: {},
   },
   balBaz: {
@@ -17,6 +19,7 @@ const people: { [key: string]: PersonProps<Integrations, RoleType> } = {
     lastName: 'Baz',
     emailAddress: 'bal.baz@example.com',
     role: 'product',
+    timeZone: Timezone['America/Los_Angeles'],
     integrations: {},
   },
 };
