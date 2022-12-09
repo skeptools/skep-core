@@ -4,6 +4,7 @@ import { mapRecord } from './helpers';
 import { BasePerson } from './person';
 
 export interface OrganizationBaseProps extends BaseProps {
+  readonly managedBy?: string; // Optional marker to put on resources to indicate automation
   readonly name: string;
   readonly subGroups?: Record<string, <P, RoleType, T extends BasePerson<P, RoleType>>(person: T, key: string) => T | undefined>;
 }
@@ -36,6 +37,10 @@ export class BaseOrganization<OrganizationPropsType> extends Base<OrganizationPr
     return mapRecord(this._props.subGroups ?? {}, (filter, _) => {
       return mapRecord(people, filter);
     });
+  }
+
+  get managedBy(): string {
+    return this._props.managedBy ?? 'Managed by Skep';
   }
 
   get name() {
