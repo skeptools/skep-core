@@ -56,4 +56,8 @@ export class BasePerson<PersonPropsType, RoleType> extends Base<PersonPropsType 
   get role() {
     return this._props.role;
   }
+
+  get timeZone() {
+    return this._props.timeZone;
+  }
 }
