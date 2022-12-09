@@ -14,6 +14,7 @@ const project = new typescript.TypeScriptProject({
   peerDeps: [
     'cdktf@~0',
     'constructs@~10',
+    'timezone-enum@~1',
   ],
   gitignore: [
     '*.d.ts',
