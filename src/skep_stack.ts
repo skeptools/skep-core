@@ -122,12 +122,12 @@ export abstract class SkepStack<
     PersonProps<IntegrationsType, RoleType>
     >(
       config,
-      personConfig => Object.assign(
+      personConfig => personConfig.integrations[namespace] ? Object.assign(
         {},
         this.defaultConfig.person ?? {},
         extract<PersonBaseProps<RoleType>, PersonProps<IntegrationsType, RoleType>>(personConfig),
         personConfig.integrations[namespace],
-      ),
+      ) : undefined,
     );
   }
 
@@ -144,12 +144,12 @@ export abstract class SkepStack<
     TeamProps<IntegrationsType, PersonKeyType, TeamTypeType>
     >(
       config,
-      teamConfig => Object.assign(
+      teamConfig => teamConfig.integrations[namespace] ? Object.assign(
         {},
         this.defaultConfig.team ?? {},
         extract<TeamBaseProps<PersonKeyType, TeamTypeType>, TeamProps<IntegrationsType, PersonKeyType, TeamTypeType>>(teamConfig),
         teamConfig.integrations[namespace],
-      ),
+      ) : undefined,
     );
   }
 }
