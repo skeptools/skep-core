@@ -6,7 +6,7 @@ import { BasePerson } from './person';
 export interface TeamBaseProps<PersonKeyType, TeamTypeType extends string> extends BaseProps {
   readonly name: string;
   readonly leads: PersonKeyType[];
-  readonly members: PersonKeyType[];
+  readonly members?: PersonKeyType[];
   readonly homepage?: string;
   readonly type?: TeamTypeType;
 }
@@ -40,9 +40,10 @@ export class BaseTeam<
       excludeBasePropertiesFromJson,
       excludeBasePropertiesFromJson ? ['allPeople', 'homepage', 'name', 'leads', 'members', 'type'] : [],
     );
+    const { members = [] } = this._props;
 
     this._allPeople = mapRecord(people, (person, key) => {
-      if (this._props.leads.includes(key) || this._props.members.includes(key)) {
+      if (this._props.leads.includes(key) || members.includes(key)) {
         return person;
       } else {
         return undefined;
@@ -56,7 +57,7 @@ export class BaseTeam<
       }
     });
     this._members = mapRecord(people, (person, key) => {
-      if (this._props.members.includes(key)) {
+      if (members.includes(key)) {
         return person;
       } else {
         return undefined;
