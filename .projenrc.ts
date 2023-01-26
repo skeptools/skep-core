@@ -1,5 +1,6 @@
 import { typescript } from 'projen';
 import { NpmAccess } from 'projen/lib/javascript';
+const majorVersion = 0;
 const project = new typescript.TypeScriptProject({
   defaultReleaseBranch: 'main',
   name: '@skeptools/skep-core',
@@ -23,6 +24,10 @@ const project = new typescript.TypeScriptProject({
     'terraform.tfstate*',
     '.gen',
   ],
+  majorVersion,
+  releaseBranches: {
+    dev: { prerelease: 'dev', npmDistTag: 'dev', majorVersion: majorVersion },
+  },
 
   // deps: [],                /* Runtime dependencies of this module. */
   // description: undefined,  /* The description is just a string that helps people understand the purpose of the package. */
