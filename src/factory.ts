@@ -7,6 +7,22 @@ import { ProviderParameters } from './provider';
 import { BaseTeam, TeamBaseProps } from './team';
 import { ExtractOrganizationType, ExtractPersonType, ExtractTeamType } from './type_extractors';
 
+export type DependenciesInterface<
+  PersonKeyType extends string,
+  TeamTypeType extends string,
+  RoleType,
+  ProviderParametersType
+> = { [key: string | number | symbol]: Factory<
+PersonKeyType,
+TeamTypeType,
+RoleType,
+{}, BaseOrganization<{}>,
+{}, BasePerson<{}, RoleType>,
+{}, BaseTeam<PersonKeyType, RoleType, {}, BasePerson<{}, RoleType>, TeamTypeType, {}>,
+ProviderParametersType,
+{}
+>;}
+
 export abstract class Factory<
   PersonKeyType extends string,
   TeamTypeType extends string,
@@ -18,16 +34,7 @@ export abstract class Factory<
   TeamPropsType,
   TeamType extends BaseTeam<PersonKeyType, RoleType, PersonPropsType, PersonType, TeamTypeType, TeamPropsType>,
   ProviderParametersType,
-  DependenciesType extends { [key: string]: Factory<
-  PersonKeyType,
-  TeamTypeType,
-  RoleType,
-  OrganizationPropsType, OrganizationType,
-  PersonPropsType, PersonType,
-  TeamPropsType, TeamType,
-  ProviderParametersType,
-  {}
-  >; },
+  DependenciesType extends DependenciesInterface<PersonKeyType, TeamTypeType, RoleType, ProviderParametersType>
 > {
   scope: Construct;
   namespace: string;
