@@ -5,6 +5,23 @@ import { BaseOrganization, OrganizationBaseProps } from './organization';
 import { BasePerson, PersonBaseProps } from './person';
 import { ProviderParameters } from './provider';
 import { BaseTeam, TeamBaseProps } from './team';
+import { ExtractOrganizationType, ExtractPersonType, ExtractTeamType } from './type_extractors';
+
+export type DependenciesInterface<
+  PersonKeyType extends string,
+  TeamTypeType extends string,
+  RoleType,
+  ProviderParametersType
+> = { [key: string | number | symbol]: Factory<
+PersonKeyType,
+TeamTypeType,
+RoleType,
+{}, BaseOrganization<{}>,
+{}, BasePerson<{}, RoleType>,
+{}, BaseTeam<PersonKeyType, RoleType, {}, BasePerson<{}, RoleType>, TeamTypeType, {}>,
+ProviderParametersType,
+{}
+>;}
 
 export abstract class Factory<
   PersonKeyType extends string,
@@ -16,7 +33,8 @@ export abstract class Factory<
   PersonType extends BasePerson<PersonPropsType, RoleType>,
   TeamPropsType,
   TeamType extends BaseTeam<PersonKeyType, RoleType, PersonPropsType, PersonType, TeamTypeType, TeamPropsType>,
-  ProviderParametersType
+  ProviderParametersType,
+  DependenciesType extends DependenciesInterface<PersonKeyType, TeamTypeType, RoleType, ProviderParametersType>
 > {
   scope: Construct;
   namespace: string;
@@ -30,14 +48,16 @@ export abstract class Factory<
   abstract organizationConstructor: new (
     scope: Construct,
     id: string,
-    config: OrganizationPropsType & OrganizationBaseProps
+    config: OrganizationPropsType & OrganizationBaseProps,
+    dependencies: { [key in keyof DependenciesType]: ExtractOrganizationType<DependenciesType[key]> }
   ) => OrganizationType
 
   abstract personConstructor: new (
     scope: Construct,
     id: string,
     organization: OrganizationType,
-    config: PersonPropsType & PersonBaseProps<RoleType>
+    config: PersonPropsType & PersonBaseProps<RoleType>,
+    dependencies: { [key in keyof DependenciesType]: ExtractPersonType<DependenciesType[key]> }
   ) => PersonType
 
   abstract teamConstructor: new (
@@ -45,7 +65,8 @@ export abstract class Factory<
     id: string,
     organization: OrganizationType,
     people: Record<PersonKeyType, PersonType>,
-    config: TeamPropsType & TeamBaseProps<PersonKeyType, TeamTypeType>
+    config: TeamPropsType & TeamBaseProps<PersonKeyType, TeamTypeType>,
+    dependencies: { [key in keyof DependenciesType]: ExtractTeamType<DependenciesType[key]> }
   ) => TeamType
 
   abstract providerParameters: ProviderParameters<keyof ProviderParametersType>
@@ -70,25 +91,39 @@ export abstract class Factory<
     this.teamsConfig = teamsConfig;
   }
 
-  load() {
+  load(dependencies: DependenciesType | undefined = undefined) {
     const providerConfig = getArrayOfKeys(this.providerParameters).reduce((previous, key) => {
       // type X = ProviderParametersType[typeof key];
       previous[key] = new TerraformVariable(this.scope, `${this.namespace.toUpperCase()}_${key.toString().toUpperCase()}`, this.providerParameters[key]).value;
       return previous;
     }, Object.assign({}));
     new this.providerConstructor(this.scope, `${this.namespace}-provider`, providerConfig);
-    this.organization = new this.organizationConstructor(this.scope, this.namespace, this.organizationConfig);
+    const organizationDependencies = Object.entries(dependencies ?? {}).reduce((current, [name, factory]) => {
+      current[name] = factory.organization;
+      return current;
+    }, Object.assign({}));
+    this.organization = new this.organizationConstructor(this.scope, this.namespace, this.organizationConfig, organizationDependencies);
+    const peopleDependencies = Object.entries(dependencies ?? {}).reduce((current, [name, factory]) => {
+      current[name] = factory.people;
+      return current;
+    }, Object.assign({}));
     this.people = mapRecord(this.peopleConfig, personConfig => new this.personConstructor(
       this.scope,
       this.namespace,
       this.organization!, personConfig,
+      peopleDependencies,
     ));
+    const teamDependencies = Object.entries(dependencies ?? {}).reduce((current, [name, factory]) => {
+      current[name] = factory.teams;
+      return current;
+    }, Object.assign({}));
     this.teams = mapRecord(this.teamsConfig, teamConfig => new this.teamConstructor(
       this.scope,
       this.namespace,
       this.organization!,
       this.people!,
       teamConfig,
+      teamDependencies,
     ));
   }
 
